@@ -17,13 +17,6 @@ doc: all
 
 xref: all
 	rebar skip_deps=true xref
-	
-run: all
-	if [ -f test.config ]; then\
-		$ERL -config test -s eganglia;\
-	else\
-		$ERL -s eganglia;\
-	fi
 
 shell: all
-	$ERL
+	${ERL}
