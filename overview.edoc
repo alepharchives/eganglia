@@ -1,0 +1,15 @@
+** this is the overview.doc file for the application 'eganglia' **
+@author Fernando Benavides <fernando.benavides@inakanetworks.com>
+@version 0.1
+@reference <a href="http://github.com/elbrujohalcon/eganglia">Fork me on Github</a>
+@reference <a href="http://ganglia.sourceforge.net/">Ganglia Monitoring System</a>
+@reference <a href="http://linux.die.net/man/1/gmetric">gmetric</a>
+@reference <a href="http://sourceforge.net/apps/trac/ganglia/wiki/ganglia_gmond_c_modules">Ganglia's C interface</a>
+@title Ganglia Monitoring System for Erlang
+@doc
+== Overview ==
+<b>eGanglia</b> lets users connect with the Ganglia Monitoring System using gmetric or Ganglia's C interface.
+== Usage ==
+Use {@link gmetric}<code>:announce/X</code> functions to interact directly with gmetric.<br />
+Use {@link gmetric}<code>:announce_every/X</code> functions to start a gen_server that periodically announces metrics using gmetric.<br />
+Implement {@link gen_metric} behavior to define new custom metrics.
