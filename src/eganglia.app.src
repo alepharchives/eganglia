@@ -1,0 +1,9 @@
+{application, eganglia,
+ [
+  {description, "Ganglia Monitoring System for Erlang"},
+  {vsn, "0.1"},
+  {registered, []},
+  {applications, [kernel, stdlib]},
+  {mod, {no_app, []}},
+	{env, []}
+ ]}.
