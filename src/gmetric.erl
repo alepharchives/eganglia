@@ -43,15 +43,21 @@
 %% API (Static)
 %% ===================================================================
 %% @doc Announces a metric
-%% @equiv announce(Name, Value, [{type, type(Value)}]).
+%% @equiv announce(Name, Value, [])
 -spec announce(Name::iodata(), Value::term()) -> ok | {error, term()}.
 announce(Name, Value) ->
-  announce(Name, Value, [{type, type(Value)}]).
+  announce(Name, Value, []).
 
 %% @doc Announces a metric
 -spec announce(Name::iodata(), Value::term(), Options::[option()]) -> ok | {error, term()}.
 announce(Name, Value, Options) ->
-  case run([{name, Name}, {value, Value} | Options]) of
+  AllOptions =
+    [{name, Name}, {value, Value} |
+       case proplists:get_value(type, Options) of
+         undefined -> [{type, type(Value)} | Options];
+         _ -> Options
+       end],
+  case run(AllOptions) of
     [] -> ok;
     Error -> {error, Error}
   end.
