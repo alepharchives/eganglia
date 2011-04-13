@@ -10,3 +10,4 @@ Implement `gen_metric` behavior to define new custom metrics.
 
 ## Future Work
 For this first version we're using gmetric for everything. Next versions should include a port for [**Ganglia's C interface**](http://sourceforge.net/apps/trac/ganglia/wiki/ganglia_gmond_c_modules)
+`gen_metric` should let you post more than one metric at a time
