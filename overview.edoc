@@ -11,6 +11,7 @@
 <b>eGanglia</b> lets users connect with the Ganglia Monitoring System using gmetric
 == Usage ==
 Use {@link gmetric}<code>:announce/X</code> functions to interact directly with gmetric.<br />
-Implement {@link gen_metric} behavior to define new custom metrics.
+Implement {@link gen_metric} behavior to define new custom metrics. Use {@link metric_group} to announce them.
+@end
 @todo For this first version we're using gmetric for everything. Next versions should include a port for Ganglia's C interface
-@todo {@link gen_metric} should let you announce more than one metric at a time
+@todo Add metric_group:add_sup_metric to behave like {@link gen_event:add_sup_handler/3}
