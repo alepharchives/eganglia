@@ -15,11 +15,8 @@
 %%%   <pre>handle_call(Msg::term(), State::term()) -> {@link call_result()}</pre>
 %%%     Called from <code>gen_metric:call/2</code><br/>
 %%%   </li><li>
-%%%   <pre>handle_cast(Msg::term(), State::term()) -> {@link handler_result()}</pre>
+%%%   <pre>handle_cast(Msg::term(), State::term()) -> {@link cast_result()}</pre>
 %%%     Called from <code>gen_metric:cast/2</code><br/>
-%%%   </li><li>
-%%%   <pre>handle_info(Msg::term(), State::term()) -> {@link handler_result()}</pre>
-%%%     Called each time an erlang message is received<br/>
 %%%   </li><li>
 %%%   <pre>terminate(Reason :: normal | shutdown | term(), State) -> _</pre>
 %%%     Let the user module clean up. Always called when server terminates.<br/>
@@ -55,11 +52,11 @@
 -type start_result() :: {ok, pid()} | {error, {already_started, pid()}} | {error, term()}.
 -export_type([gen_start_option/0, start_option/0, start_result/0]).
 
--type init_result()     :: {ok, State::term(), Timeout::pos_integer()} | ignore | {stop, Reason::term()}.
--type metric_result()   :: {ok, Value::term(), State::term(), Timeout::pos_integer()} | {ignore, State::term(), Timeout::pos_integer()}.
--type call_result()     :: {reply, Reply::term(), State::term(), Timeout::pos_integer()} | {stop, Reason::term(), Reply::term(), State::term()}.
--type handler_result()  :: {noreply, State::term(), Timeout::pos_integer()} | {stop, Reason::term(), State::term()}.
--export_type([init_result/0, handler_result/0, call_result/0, metric_result/0]).
+-type init_result()   :: {ok, State::term()}.
+-type metric_result() :: {ok, Value::term(), State::term()}.
+-type call_result()   :: {ok, Reply::term(), State::term()} | {stop, Reason::term(), Reply::term(), State::term()}.
+-type cast_result()   :: {noreply, State::term()} | {stop, Reason::term(), State::term()}.
+-export_type([init_result/0, cast_result/0, call_result/0, metric_result/0]).
 
 -type server() :: atom() | pid() | {global, atom()}.
 -export_type([server/0]).
@@ -92,8 +89,7 @@
 %%% @hidden
 -spec behaviour_info(callbacks | term()) -> undefined | [{atom(), non_neg_integer()}].
 behaviour_info(callbacks) ->
-  [{init, 1}, {handle_metric, 1}, {handle_cast, 2},
-   {handle_info, 2}, {handle_call, 2}, {terminate, 2}];
+  [{init, 1}, {handle_metric, 1}, {handle_cast, 2}, {handle_call, 2}, {terminate, 2}];
 behaviour_info(_Other) ->
   undefined.
 
@@ -184,7 +180,7 @@ handle_call({call, Request}, _From, State = #state{module = Mod, mod_state = Mod
   end.
 
 %% @hidden
--spec handle_cast({cast, term()}, state()) -> handler_result().
+-spec handle_cast({cast, term()}, state()) -> cast_result().
 handle_cast({cast, Request}, State = #state{module = Mod, mod_state = ModState}) ->
   try Mod:handle_cast(Request, ModState) of
     {noreply, NewModSt, Timeout} ->

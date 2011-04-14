@@ -6,7 +6,7 @@
 
 ## Usage
 Use `gmetric:announce/X` functions to interact directly with *gmetric*.
-Implement `gen_metric` behavior to define new custom metrics. 
+Implement `gen_metric` behavior to define new custom metrics. Use `metric_group` to announce them. 
 
 ## Future Work
 For this first version we're using gmetric for everything. Next versions should include a port for [**Ganglia's C interface**](http://sourceforge.net/apps/trac/ganglia/wiki/ganglia_gmond_c_modules)
