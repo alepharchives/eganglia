@@ -276,8 +276,8 @@ handle_info(collect, State = #state{metrics = Metrics}) ->
 handle_info(announce, State = #state{metrics = Metrics, announce_timer = ATimer, time_threshold = TimeThreshold}) ->
   {ok, cancel} = timer:cancel(ATimer),
   lists:foreach(fun announce_metric/1, Metrics),
-  {ok, ATimer} = timer:send_after(TimeThreshold * 1000, announce),
-  {noreply, State#state{announce_timer = ATimer}};
+  {ok, NewATimer} = timer:send_after(TimeThreshold * 1000, announce),
+  {noreply, State#state{announce_timer = NewATimer}};
 handle_info(Info, State) ->
   error_logger:info_msg("Ignored info: ~p~n", [Info]),
   {noreply, State}.

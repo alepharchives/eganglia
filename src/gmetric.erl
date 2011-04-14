@@ -78,7 +78,11 @@ type(_) -> string.
 %% Private
 %% ===================================================================
 run(Options) ->
-  os:cmd("gmetric" ++ lists:map(fun parse_option/1, Options)).
+  Command = erlang:binary_to_list(
+              erlang:iolist_to_binary(
+                "gmetric" ++ lists:map(fun parse_option/1, Options))),
+  io:format("~p~n", [Command]),
+  os:cmd(Command).
 
 parse_option({Name, Value}) ->
   io_lib:format(" --~s=", [Name]) ++ parse_value(Value);
@@ -87,4 +91,5 @@ parse_option(Name) ->
 
 parse_value(Value) when is_atom(Value) -> atom_to_list(Value);
 parse_value(Value) when is_integer(Value) -> integer_to_list(Value);
+parse_value(Value) when is_float(Value) -> float_to_list(Value);
 parse_value(Value) -> [$\", Value, $\"].
