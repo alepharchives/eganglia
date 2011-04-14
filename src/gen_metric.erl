@@ -18,7 +18,7 @@
 %%%   <pre>handle_cast(Msg::term(), State::term()) -> {@link cast_result()}</pre>
 %%%     Called from <code>gen_metric:cast/2</code><br/>
 %%%   </li><li>
-%%%   <pre>terminate(Reason :: normal | shutdown | term(), State) -> _</pre>
+%%%   <pre>terminate(Reason :: term(), State) -> _</pre>
 %%%     Let the user module clean up. Always called when server terminates.<br/>
 %%%   </li>
 %%% </ul>
@@ -46,7 +46,7 @@
 
 -type init_result()   :: {ok, State::term()}.
 -type metric_result() :: {ok, Value::term(), State::term()}.
--type call_result()   :: {ok, Reply::term(), State::term()} | {stop, Reason::term(), Reply::term(), State::term()}.
+-type call_result()   :: {reply, Reply::term(), State::term()} | {stop, Reason::term(), Reply::term(), State::term()}.
 -type cast_result()   :: {noreply, State::term()} | {stop, Reason::term(), State::term()}.
 -export_type([init_result/0, cast_result/0, call_result/0, metric_result/0]).
 

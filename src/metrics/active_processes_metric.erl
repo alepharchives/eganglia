@@ -22,3 +22,23 @@
 -author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
 
 -behavior(gen_metric).
+
+-record(state, {}).
+-opaque state() :: #state{}.
+
+-export([add/2, delete/1]).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% API FUNCTIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% @doc Adds the metric to the group
+-spec add(metric_group:group(), term()) -> ok | {error, already_present | term()}.
+add(Group, Constant) ->
+  metric_group:add_metric(Group, ?MODULE,
+                          <<"Erlang Processes on ", (atom_to_binary(node(), utf8))/binary>>,
+                          ?MODULE, Constant).
+
+%% @doc Removes the metric from the group
+-spec delete(metric_group:group()) -> ok | {error, not_found}.
+delete(Group) ->
+  metric_group:delete_metric(Group, ?MODULE, normal).
