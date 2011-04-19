@@ -42,7 +42,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% API
--export([add_metric/5, add_metric/6, add_metric/7, delete_metric/3,
+-export([add_metric/3, add_metric/4, add_metric/5, add_metric/6, delete_metric/3,
          call/3, call/4, cast/3, cast/4,
          start_link/3, start_link/4, start/3, start/4, stop/1,
          which_metrics/1]).
@@ -78,7 +78,7 @@ start(CollectEvery, TimeThreshold, Options) ->
   gen_server:start(?MODULE, {CollectEvery, TimeThreshold}, Options).
 
 %%% @doc  Starts a named metric group.
--spec start(once | pos_integer(), pos_integer(), {local|global, atom()}, [start_option()]) -> start_result().
+-spec start({local|global, atom()}, once | pos_integer(), pos_integer(), [start_option()]) -> start_result().
 start(Name, CollectEvery, TimeThreshold, Options) ->
   gen_server:start(Name, ?MODULE, {CollectEvery, TimeThreshold}, Options).
 
@@ -88,26 +88,32 @@ start_link(CollectEvery, TimeThreshold, Options) ->
   gen_server:start_link(?MODULE, {CollectEvery, TimeThreshold}, Options).
 
 %%% @doc  Starts and links a named generic server.
--spec start_link(once | pos_integer(), pos_integer(), {local|global, atom()}, [start_option()]) -> start_result().
+-spec start_link({local|global, atom()}, once | pos_integer(), pos_integer(), [start_option()]) -> start_result().
 start_link(Name, CollectEvery, TimeThreshold, Options) ->
   gen_server:start_link(Name, ?MODULE, {CollectEvery, TimeThreshold}, Options).
 
 %% @doc  Adds a metric to the group
-%% @equiv add_metric(Group, MetricId, Title, Module, InitArgs, [])
--spec add_metric(group(), term(), binary(), atom(), term()) -> ok | {error, already_present | term()}.
-add_metric(Group, MetricId, Title, Module, InitArgs) ->
-  add_metric(Group, MetricId, Title, Module, InitArgs, []).
+%% @equiv add_metric(Group, Module, Module, InitArgs)
+-spec add_metric(group(), atom(), term()) -> ok | {error, already_present | term()}.
+add_metric(Group, Module, InitArgs) ->
+  add_metric(Group, Module, Module, InitArgs).
 
 %% @doc  Adds a metric to the group
-%% @equiv add_metric(Group, MetricId, Title, Module, InitArgs, Options, 0.0)
--spec add_metric(group(), term(), binary(), atom(), term(), [gmetric:option()]) -> ok | {error, already_present | term()}.
-add_metric(Group, MetricId, Title, Module, InitArgs, Options) ->
-  add_metric(Group, MetricId, Title, Module, InitArgs, Options, 0.0).
+%% @equiv add_metric(Group, MetricId, Module, InitArgs, [])
+-spec add_metric(group(), term(), atom(), term()) -> ok | {error, already_present | term()}.
+add_metric(Group, MetricId, Module, InitArgs) ->
+  add_metric(Group, MetricId, Module, InitArgs, []).
 
 %% @doc  Adds a metric to the group
--spec add_metric(group(), term(), binary(), atom(), term(), [gmetric:option()], float()) -> ok | {error, already_present | term()}.  
-add_metric(Group, MetricId, Title, Module, InitArgs, Options, Threshold) ->
-  gen_server:call(Group, {add_metric, MetricId, Title, Module, InitArgs, Options, Threshold}).
+%% @equiv add_metric(Group, MetricId, Module, InitArgs, Options, 0.0)
+-spec add_metric(group(), term(), atom(), term(), [gmetric:option()]) -> ok | {error, already_present | term()}.
+add_metric(Group, MetricId, Module, InitArgs, Options) ->
+  add_metric(Group, MetricId, Module, InitArgs, Options, 0.0).
+
+%% @doc  Adds a metric to the group
+-spec add_metric(group(), term(), atom(), term(), [gmetric:option()], float()) -> ok | {error, already_present | term()}.  
+add_metric(Group, MetricId, Module, InitArgs, Options, Threshold) ->
+  gen_server:call(Group, {add_metric, MetricId, Module, InitArgs, Options, Threshold}).
 
 %%% @doc Makes a synchronous call to a particular metric.
 -spec call(group(), term(), term()) -> Response::term() | {error, bad_metric | term()}.
@@ -169,14 +175,14 @@ init({CollectEvery, TimeThreshold}) ->
 
 %% @hidden
 -spec handle_call({delete_metric, term(), term()} | {add_metric, term(), binary(), atom(), term(), [gmetric:option()], float()} | which_metrics | {call, term(), term()}, reference(), state()) -> call_result().
-handle_call({add_metric, MetricId, Title, Module, InitArgs, Options, Threshold}, _From, State) ->
+handle_call({add_metric, MetricId, Module, InitArgs, Options, Threshold}, _From, State) ->
   #state{metrics = Metrics, collect_timer = CTimer} = State,
   case lists:keymember(MetricId, #metric.id, Metrics) of
     true ->
       {reply, {error, already_present}, State};
     false ->
       try Module:init(InitArgs) of
-        {ok, ModState} ->
+        {ok, Title, ModState} ->
           {Value, ModState1} =
             case CTimer of
               collect_once ->

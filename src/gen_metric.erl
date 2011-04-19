@@ -44,7 +44,7 @@
 -author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
 -vsn("0.1").
 
--type init_result()   :: {ok, State::term()}.
+-type init_result()   :: {ok, Title::binary(), State::term()}.
 -type metric_result() :: {ok, Value::term(), State::term()}.
 -type call_result()   :: {reply, Reply::term(), State::term()} | {stop, Reason::term(), Reply::term(), State::term()}.
 -type cast_result()   :: {noreply, State::term()} | {stop, Reason::term(), State::term()}.

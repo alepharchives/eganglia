@@ -26,7 +26,7 @@
 -record(state, {constant :: term()}).
 -opaque state() :: #state{}.
 
--export([add/2, add/3, delete/1, constant/1, constant/2]).
+-export([add/2, delete/1, constant/1, constant/2]).
 -export([init/1, handle_metric/1, handle_call/2, handle_cast/2, terminate/2]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -35,12 +35,7 @@
 %% @doc Adds the metric to the group
 -spec add(metric_group:group(), term()) -> ok | {error, already_present | term()}.
 add(Group, Constant) ->
-  metric_group:add_metric(Group, ?MODULE, <<"Happiness">>, ?MODULE, Constant, [{units, <<"Smiles">>}], 1.0).
-
-%% @doc Adds the metric to the group
--spec add(metric_group:group(), binary(), term()) -> ok | {error, already_present | term()}.
-add(Group, Title, Constant) ->
-  metric_group:add_metric(Group, ?MODULE, Title, ?MODULE, Constant).
+  metric_group:add_metric(Group, ?MODULE, Constant, [{units, <<"Smiles">>}], 1.0).
 
 %% @doc Removes the metric from the group
 -spec delete(metric_group:group()) -> ok | {error, not_found}.
@@ -62,7 +57,7 @@ constant(Group, Constant) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% @private
 -spec init(Constant) -> {ok, #state{constant :: Constant}}.
-init(Constant) -> {ok, #state{constant = Constant}}.
+init(Constant) -> {ok, <<"A constant metric">>, #state{constant = Constant}}.
 
 %% @private
 -spec handle_metric(#state{constant :: Constant}) -> {ok, Constant, #state{constant :: Constant}}.
