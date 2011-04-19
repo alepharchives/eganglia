@@ -11,7 +11,44 @@
 <b>eGanglia</b> lets users connect with the Ganglia Monitoring System using gmetric
 == Usage ==
 Use {@link gmetric}<code>:announce/X</code> functions to interact directly with gmetric.<br />
-Implement {@link gen_metric} behavior to define new custom metrics. Use {@link metric_group} to announce them.
+Implement {@link gen_metric} behavior to define new custom metrics. Use {@link metric_group} to announce them.<br />
+Or just start the application using {@link eganglia:start/0} to start the metric groups defined in <a href="#configuration">the application configuration</a>
+== Configuration ==
+<a name="configuration" />
+<b>elog</b> uses Erlang config files to set its environmental variables. The allowed options are:
+<dl>
+  <dt><code>groups :: [metric_group()]</code></dt>
+    <dd>Default metric groups to load on application start.
+        Each <code>metric_group</code> is represented by a tuple that may have one of the following formats:
+      <ul>
+        <li><code>{Name, CollectEvery, TimeThreshold, Metrics}</code></li>
+        <li><code>{CollectEvery, TimeThreshold, Metrics}</code></li>
+        <li><code>{CollectEvery, Metrics}</code></li>
+      </ul> 
+      <dl>
+        <dt><code>Name :: {local|global, atom()}</code></dt>
+          <dd>The metric group process will be registered with this name</dd>
+        <dt><code>CollectEvery ::  once | pos_integer()</code></dt>
+          <dd>Metrics will be collected either <i>once</i> or every <i>CollectEvery</i> seconds</dd>
+        <dt><code>TimeThreshold :: pos_integer()</code></dt>
+          <dd>If no <i>ValueThreshold</i> is triggered within <i>TimeThreshold</i> seconds, the entire metric group is sent.
+              The default value for this field is 3600</dd>
+        <dt><code>Metrics :: [metric()]</code></dt>
+          <dd>List of metrics to include in the group.
+              Each <code>metric</code> is represented by a tuple that may have one of the following formats:
+            <ul>
+              <li><code>{Module, InitArgs}</code></li>
+              <li><code>{Name, Module, InitArgs}</code></li>
+              <li><code>{Name, Module, InitArgs}</code></li>
+              <li><code>{Name, Module, InitArgs, Options}</code></li>
+              <li><code>{Name, Module, InitArgs, Options, Threshold}</code></li>
+            </ul>
+            The params behave exactly as in {@link metric_group:add_metric/6}
+        </dd>
+      </dl>
+      To fully understand each parameter, you can check the original <a href="http://sourceforge.net/apps/trac/ganglia/wiki/Gmond%203.1.x%20General%20Configuration#collection_group">Ganglia Configuration docs</a>.
+    </dd>
+</dl>
 @end
 @todo For this first version we're using gmetric for everything. Next versions should include a port for Ganglia's C interface
 @todo Add metric_group:add_sup_metric to behave like {@link gen_event:add_sup_handler/3}

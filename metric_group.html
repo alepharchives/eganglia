@@ -36,9 +36,10 @@
 
 
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_metric-5">add_metric/5</a></td><td> Adds a metric to the group.</td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_metric-3">add_metric/3</a></td><td> Adds a metric to the group.</td></tr>
+<tr><td valign="top"><a href="#add_metric-4">add_metric/4</a></td><td> Adds a metric to the group.</td></tr>
+<tr><td valign="top"><a href="#add_metric-5">add_metric/5</a></td><td> Adds a metric to the group.</td></tr>
 <tr><td valign="top"><a href="#add_metric-6">add_metric/6</a></td><td> Adds a metric to the group.</td></tr>
-<tr><td valign="top"><a href="#add_metric-7">add_metric/7</a></td><td> Adds a metric to the group.</td></tr>
 <tr><td valign="top"><a href="#call-3">call/3</a></td><td>Makes a synchronous call to a particular metric.</td></tr>
 <tr><td valign="top"><a href="#call-4">call/4</a></td><td>Makes a synchronous call to a particular metric.</td></tr>
 <tr><td valign="top"><a href="#cast-3">cast/3</a></td><td>Make a cast to a paricular metric.</td></tr>
@@ -54,22 +55,28 @@
 
 <h2><a name="functions">Function Details</a></h2>
 
+<h3 class="function"><a name="add_metric-3">add_metric/3</a></h3>
+<div class="spec">
+<p><tt>add_metric(Group::<a href="#type-group">group()</a>, Module::atom(), InitArgs::term()) -&gt; ok | {error, already_present | term()}</tt><br></p>
+</div><p>Equivalent to <a href="#add_metric-4"><tt>add_metric(Group, Module, Module, InitArgs)</tt></a>.</p>
+<p> Adds a metric to the group</p>
+
+<h3 class="function"><a name="add_metric-4">add_metric/4</a></h3>
+<div class="spec">
+<p><tt>add_metric(Group::<a href="#type-group">group()</a>, MetricId::term(), Module::atom(), InitArgs::term()) -&gt; ok | {error, already_present | term()}</tt><br></p>
+</div><p>Equivalent to <a href="#add_metric-5"><tt>add_metric(Group, MetricId, Module, InitArgs, [])</tt></a>.</p>
+<p> Adds a metric to the group</p>
+
 <h3 class="function"><a name="add_metric-5">add_metric/5</a></h3>
 <div class="spec">
-<p><tt>add_metric(Group::<a href="#type-group">group()</a>, MetricId::term(), Title::binary(), Module::atom(), InitArgs::term()) -&gt; ok | {error, already_present | term()}</tt><br></p>
-</div><p>Equivalent to <a href="#add_metric-6"><tt>add_metric(Group, MetricId, Title, Module, InitArgs, [])</tt></a>.</p>
+<p><tt>add_metric(Group::<a href="#type-group">group()</a>, MetricId::term(), Module::atom(), InitArgs::term(), Options::[<a href="gmetric.html#type-option">gmetric:option()</a>]) -&gt; ok | {error, already_present | term()}</tt><br></p>
+</div><p>Equivalent to <a href="#add_metric-6"><tt>add_metric(Group, MetricId, Module, InitArgs, Options,
+	   0.0)</tt></a>.</p>
 <p> Adds a metric to the group</p>
 
 <h3 class="function"><a name="add_metric-6">add_metric/6</a></h3>
 <div class="spec">
-<p><tt>add_metric(Group::<a href="#type-group">group()</a>, MetricId::term(), Title::binary(), Module::atom(), InitArgs::term(), Options::[<a href="gmetric.html#type-option">gmetric:option()</a>]) -&gt; ok | {error, already_present | term()}</tt><br></p>
-</div><p>Equivalent to <a href="#add_metric-7"><tt>add_metric(Group, MetricId, Title, Module, InitArgs,
-	   Options, 0.0)</tt></a>.</p>
-<p> Adds a metric to the group</p>
-
-<h3 class="function"><a name="add_metric-7">add_metric/7</a></h3>
-<div class="spec">
-<p><tt>add_metric(Group::<a href="#type-group">group()</a>, MetricId::term(), Title::binary(), Module::atom(), InitArgs::term(), Options::[<a href="gmetric.html#type-option">gmetric:option()</a>], Threshold::float()) -&gt; ok | {error, already_present | term()}</tt><br></p>
+<p><tt>add_metric(Group::<a href="#type-group">group()</a>, MetricId::term(), Module::atom(), InitArgs::term(), Options::[<a href="gmetric.html#type-option">gmetric:option()</a>], Threshold::float()) -&gt; ok | {error, already_present | term()}</tt><br></p>
 </div><p> Adds a metric to the group</p>
 
 <h3 class="function"><a name="call-3">call/3</a></h3>
@@ -107,7 +114,7 @@
 
 <h3 class="function"><a name="start-4">start/4</a></h3>
 <div class="spec">
-<p><tt>start(Name::once | pos_integer(), CollectEvery::pos_integer(), TimeThreshold::{local | global, atom()}, Options::[<a href="#type-start_option">start_option()</a>]) -&gt; <a href="#type-start_result">start_result()</a></tt><br></p>
+<p><tt>start(Name::{local | global, atom()}, CollectEvery::once | pos_integer(), TimeThreshold::pos_integer(), Options::[<a href="#type-start_option">start_option()</a>]) -&gt; <a href="#type-start_result">start_result()</a></tt><br></p>
 </div><p> Starts a named metric group.</p>
 
 <h3 class="function"><a name="start_link-3">start_link/3</a></h3>
@@ -117,7 +124,7 @@
 
 <h3 class="function"><a name="start_link-4">start_link/4</a></h3>
 <div class="spec">
-<p><tt>start_link(Name::once | pos_integer(), CollectEvery::pos_integer(), TimeThreshold::{local | global, atom()}, Options::[<a href="#type-start_option">start_option()</a>]) -&gt; <a href="#type-start_result">start_result()</a></tt><br></p>
+<p><tt>start_link(Name::{local | global, atom()}, CollectEvery::once | pos_integer(), TimeThreshold::pos_integer(), Options::[<a href="#type-start_option">start_option()</a>]) -&gt; <a href="#type-start_result">start_result()</a></tt><br></p>
 </div><p> Starts and links a named generic server.</p>
 
 <h3 class="function"><a name="stop-1">stop/1</a></h3>
@@ -132,6 +139,6 @@
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
-<p><i>Generated by EDoc, Apr 14 2011, 17:10:59.</i></p>
+<p><i>Generated by EDoc, Apr 19 2011, 11:15:28.</i></p>
 </body>
 </html>

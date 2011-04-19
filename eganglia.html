@@ -1,36 +1,32 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>Module active_processes_metric</title>
+<title>Module eganglia</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
 </head>
 <body bgcolor="white">
 <div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
 <hr>
 
-<h1>Module active_processes_metric</h1>
-<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Number of Active Processes.
+<h1>Module eganglia</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>eganglia application.
 <p>Copyright © (C) 2011 Inaka Labs SRL</p>
 
+<p><b>Behaviours:</b> <a href="application.html"><tt>application</tt></a>.</p>
 <p><b>Authors:</b> Fernando Benavides (<a href="mailto:fernando.benavides@inakanetworks.com"><tt>fernando.benavides@inakanetworks.com</tt></a>).</p>
 
-<h2><a name="description">Description</a></h2>Number of Active Processes
+<h2><a name="description">Description</a></h2>eganglia application.
+        When started, it starts the metric groups defined in the environment variables
 <h2><a name="index">Function Index</a></h2>
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add-1">add/1</a></td><td>Adds the metric to the group.</td></tr>
-<tr><td valign="top"><a href="#delete-1">delete/1</a></td><td>Removes the metric from the group.</td></tr>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#start-0">start/0</a></td><td> Starts the application.</td></tr>
 </table>
 
 <h2><a name="functions">Function Details</a></h2>
 
-<h3 class="function"><a name="add-1">add/1</a></h3>
+<h3 class="function"><a name="start-0">start/0</a></h3>
 <div class="spec">
-<p><tt>add(Group::<a href="metric_group.html#type-group">metric_group:group()</a>) -&gt; ok | {error, already_present | term()}</tt><br></p>
-</div><p>Adds the metric to the group</p>
-
-<h3 class="function"><a name="delete-1">delete/1</a></h3>
-<div class="spec">
-<p><tt>delete(Group::<a href="metric_group.html#type-group">metric_group:group()</a>) -&gt; ok | {error, not_found}</tt><br></p>
-</div><p>Removes the metric from the group</p>
+<p><tt>start() -&gt; ok | {error, term()}</tt><br></p>
+</div><p> Starts the application</p>
 <hr>
 
 <div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
