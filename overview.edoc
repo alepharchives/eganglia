@@ -22,8 +22,7 @@ Or just start the application using {@link eganglia:start/0} to start the metric
         Each <code>metric_group</code> is represented by a tuple that may have one of the following formats:
       <ul>
         <li><code>{Name, CollectEvery, TimeThreshold, Metrics}</code></li>
-        <li><code>{CollectEvery, TimeThreshold, Metrics}</code></li>
-        <li><code>{CollectEvery, Metrics}</code></li>
+        <li><code>{Name, CollectEvery, Metrics}</code></li>
       </ul> 
       <dl>
         <dt><code>Name :: {local|global, atom()}</code></dt>
