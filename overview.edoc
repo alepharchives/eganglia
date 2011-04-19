@@ -15,7 +15,7 @@ Implement {@link gen_metric} behavior to define new custom metrics. Use {@link m
 Or just start the application using {@link eganglia:start/0} to start the metric groups defined in <a href="#configuration">the application configuration</a>
 == Configuration ==
 <a name="configuration" />
-<b>elog</b> uses Erlang config files to set its environmental variables. The allowed options are:
+<b>eganglia</b> uses Erlang config files to set its environmental variables. The allowed options are:
 <dl>
   <dt><code>groups :: [metric_group()]</code></dt>
     <dd>Default metric groups to load on application start.
