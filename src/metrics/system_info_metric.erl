@@ -37,7 +37,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% API FUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% @doc Adds the metric to the group
+%% @doc Adds the metric to the group. The value will come from erlang:system_info(Info)
 -spec add(metric_group:group(), term()) -> ok | {error, already_present | term()}.
 add(Group, Info) ->
   metric_group:add_metric(Group, Info, ?MODULE, Info).
