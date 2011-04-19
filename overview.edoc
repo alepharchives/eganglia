@@ -1,6 +1,6 @@
 ** this is the overview.doc file for the application 'eganglia' **
 @author Fernando Benavides <fernando.benavides@inakanetworks.com>
-@version 0.5
+@version 0.9.1
 @reference <a href="http://github.com/elbrujohalcon/eganglia">Fork me on Github</a>
 @reference <a href="http://ganglia.sourceforge.net/">Ganglia Monitoring System</a>
 @reference <a href="http://linux.die.net/man/1/gmetric">gmetric</a>
