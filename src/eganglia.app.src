@@ -15,7 +15,7 @@
 {application, eganglia,
  [
   {description, "Ganglia Monitoring System for Erlang"},
-  {vsn, "0.5"},
+  {vsn, "0.9.1"},
   {registered, []},
   {applications, [kernel, stdlib]},
   {mod, {eganglia, []}},
