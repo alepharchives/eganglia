@@ -1,7 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% @author Fernando Benavides <fernando.benavides@inakanetworks.com>
 %%% @copyright (C) 2011 Inaka Labs SRL
-%%% @doc erlang:statistics/1 metrics
+%%% @doc erlang:memory/1 metrics
 %%% @end
 %%%-------------------------------------------------------------------
 
@@ -18,7 +18,7 @@
 %% KIND, either express or implied.  See the License for the
 %% specific language governing permissions and limitations
 %% under the License.
--module(statistics_metric).
+-module(memory_metric).
 -author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
 
 -behavior(gen_metric).
@@ -57,10 +57,7 @@ init(Info) ->
 
 %% @private
 -spec handle_metric(state()) -> {ok, pos_integer(), state()}.
-handle_metric(State = #state{info = Info}) -> {ok, case erlang:statistics(Info) of
-                                                     {Total, _LastCall} -> Total;
-                                                     Other -> Other
-                                                   end, State}.
+handle_metric(State = #state{info = Info}) -> {ok, erlang:memory(Info), State}.
 
 %% @private
 -spec handle_call(Any, state()) -> {stop, {unexptected_call, Any}, {unexptected_call, Any}, state()}.

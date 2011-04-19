@@ -19,11 +19,20 @@
   {registered, []},
   {applications, [kernel, stdlib]},
   {mod, {eganglia, []}},
-  {env, [{groups, [{{local, basics}, 1, [{process_count, system_info_metric, process_count},
-                                         {run_queue, statistics_metric, run_queue},
-                                         {reductions, statistics_metric, reductions},
+  {env, [{groups, [{{local, basics}, 5, [{process_count, system_info_metric, process_count, [{type, uint32}]},
+                                         {run_queue, statistics_metric, run_queue, [{type, uint32}]},
+                                         {reductions, statistics_metric, reductions, [{type, uint32}]},
                                          {uptime_metric, []}]},
-                   {{local, constants}, once, [{otp_version_metric, []}]}
+                   {{local, memory}, 5, [{memory_system, memory_metric, system, [{type, uint32}]},
+                                         {memory_atom, memory_metric, atom, [{type, uint32}]},
+                                         {memory_atom_used, memory_metric, atom_used, [{type, uint32}]},
+                                         {memory_binary, memory_metric, binary, [{type, uint32}]},
+                                         {memory_code, memory_metric, code, [{type, uint32}]},
+                                         {memory_ets, memory_metric, ets, [{type, uint32}]},
+                                         {memory_processes, memory_metric, processes, [{type, uint32}]},
+                                         {memory_processes_used, memory_metric, processes_used, [{type, uint32}]}                                         
+                                         ]},
+                   {{local, constants}, once, 10, [{otp_release, system_info_metric, otp_release}]}
                   ]}
         ]}
  ]}.

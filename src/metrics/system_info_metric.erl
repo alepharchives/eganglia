@@ -53,7 +53,7 @@ delete(Group, Info) ->
 %% @private
 -spec init(term()) -> {ok, binary(), state()}.
 init(Info) ->
-  {ok, erlang:iolist_to_binary(io_lib:format("~p: ~p", [node(), Info])), #state{info = Info}}.
+  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p", [node(), Info])), #state{info = Info}}.
 
 %% @private
 -spec handle_metric(state()) -> {ok, pos_integer(), state()}.

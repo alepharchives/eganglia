@@ -73,7 +73,7 @@ add_metrics({Name, _, _, Metrics}) -> add_metrics(Name, Metrics);
 add_metrics({{local, Name}, _, Metrics}) -> add_metrics(Name, Metrics);
 add_metrics({Name, _, Metrics}) -> add_metrics(Name, Metrics).
 
-add_metrics(Name, Metrics) -> lists:foreach(fun(Metric) -> add_metric(Name, Metric) end, Metrics).
+add_metrics(Name, Metrics) -> lists:foreach(fun(Metric) -> ok = add_metric(Name, Metric) end, Metrics).
 
 add_metric(Group, {Module, InitArgs}) ->
   metric_group:add_metric(Group, Module, InitArgs);
