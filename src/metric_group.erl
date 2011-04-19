@@ -42,7 +42,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% API
--export([add_metric/3, add_metric/4, add_metric/5, add_metric/6, delete_metric/3,
+-export([add_metric/4, add_metric/5, add_metric/6, delete_metric/3,
          call/3, call/4, cast/3, cast/4,
          start_link/3, start_link/4, start/3, start/4, stop/1,
          which_metrics/1]).
@@ -91,12 +91,6 @@ start_link(CollectEvery, TimeThreshold, Options) ->
 -spec start_link({local|global, atom()}, once | pos_integer(), pos_integer(), [start_option()]) -> start_result().
 start_link(Name, CollectEvery, TimeThreshold, Options) ->
   gen_server:start_link(Name, ?MODULE, {CollectEvery, TimeThreshold}, Options).
-
-%% @doc  Adds a metric to the group
-%% @equiv add_metric(Group, Module, Module, InitArgs)
--spec add_metric(group(), atom(), term()) -> ok | {error, already_present | term()}.
-add_metric(Group, Module, InitArgs) ->
-  add_metric(Group, Module, Module, InitArgs).
 
 %% @doc  Adds a metric to the group
 %% @equiv add_metric(Group, MetricId, Module, InitArgs, [])
