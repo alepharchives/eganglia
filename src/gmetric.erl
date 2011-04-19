@@ -69,7 +69,7 @@ version() ->
 
 %% @doc Infers a gmetric type for the given value.
 %%      The inferred type is the most general possible one
--spec type(term()) -> type().
+-spec type(term()) -> float | int32 | string.
 type(Value) when is_integer(Value) -> int32;
 type(Value) when is_float(Value) -> float;
 type(_) -> string.

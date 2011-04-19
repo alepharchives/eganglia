@@ -55,11 +55,11 @@ delete(Group) ->
 init([]) -> {ok, <<(atom_to_binary(node(), utf8))/binary, " Uptime">>, #state{}}.
 
 %% @private
--spec handle_metric(state()) -> {ok, pos_integer(), state()}.
+-spec handle_metric(state()) -> {ok, string(), state()}.
 handle_metric(State) -> {ok, format(erlang:statistics(wall_clock)), State}.
 
 %% @private
--spec handle_call(Any, state()) -> {stop, {unexptected_call, Any}, {unexptected_call, Any}, state()}.
+-spec handle_call(Any, state()) -> {stop, {unexpected_call, Any}, {unexpected_call, Any}, state()}.
 handle_call(Any, State) -> {stop, {unexpected_call, Any}, {unexpected_call, Any}, State}.
 
 %% @private

@@ -33,9 +33,9 @@
 %% API FUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% @doc Adds the metric to the group
--spec add(metric_group:group(), term()) -> ok | {error, already_present | term()}.
+-spec add(metric_group:group(), atom()) -> ok | {error, already_present | term()}.
 add(Group, Constant) ->
-  metric_group:add_metric(Group, ?MODULE, Constant, [{units, <<"Smiles">>}], 1.0).
+  metric_group:add_metric(Group, Constant, ?MODULE, Constant, [{units, <<"Smiles">>}], 1.0).
 
 %% @doc Removes the metric from the group
 -spec delete(metric_group:group()) -> ok | {error, not_found}.
@@ -56,7 +56,7 @@ constant(Group, Constant) ->
 %% API FUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% @private
--spec init(Constant) -> {ok, #state{constant :: Constant}}.
+-spec init(Constant) -> {ok, binary(), #state{constant :: Constant}}.
 init(Constant) -> {ok, <<"A constant metric">>, #state{constant = Constant}}.
 
 %% @private

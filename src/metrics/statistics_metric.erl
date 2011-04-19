@@ -63,7 +63,7 @@ handle_metric(State = #state{info = Info}) -> {ok, case erlang:statistics(Info) 
                                                    end, State}.
 
 %% @private
--spec handle_call(Any, state()) -> {stop, {unexptected_call, Any}, {unexptected_call, Any}, state()}.
+-spec handle_call(Any, state()) -> {stop, {unexpected_call, Any}, {unexpected_call, Any}, state()}.
 handle_call(Any, State) -> {stop, {unexpected_call, Any}, {unexpected_call, Any}, State}.
 
 %% @private

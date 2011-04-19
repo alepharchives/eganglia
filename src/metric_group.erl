@@ -31,9 +31,6 @@
 -type start_result() :: {ok, pid()} | {error, {already_started, pid()}} | {error, term()}.
 -export_type([start_option/0, start_result/0]).
 
--type call_result()     :: {reply, Reply::term(), State::term()} | {stop, Reason::term(), Reply::term(), State::term()}.
--type handler_result()  :: {noreply, State::term()} | {stop, Reason::term(), State::term()}.
-
 -type group() :: atom() | pid() | {global, atom()}.
 -export_type([group/0]).
 
@@ -43,7 +40,7 @@
 
 %% API
 -export([add_metric/3, add_metric/4, add_metric/5, add_metric/6, delete_metric/3,
-         call/3, call/4, cast/3, cast/4,
+         call/3, call/4, cast/3,
          start_link/3, start_link/4, start/3, start/4, stop/1,
          which_metrics/1]).
 %% GEN SERVER
@@ -131,12 +128,6 @@ call(Group, MetricId, Request, Timeout) ->
 cast(Group, MetricId, Request) ->
   gen_server:cast(Group, {cast, MetricId, Request}).
 
-%%% @doc Make a cast to a generic server.
-%%% Returns ok immediately, even if the metric doesn't exist
--spec cast(group(), term(), term(), non_neg_integer()|infinity) -> ok.
-cast(Group, MetricId, Request, Timeout) ->
-  gen_server:cast(Group, {cast, MetricId, Request}, Timeout).
-
 %% @doc  Removes a metric to the group.
 %%       If the metric doesn't exist it just does nothing at all.
 -spec delete_metric(group(), term(), term()) -> ok | {error, not_found}.  
@@ -158,7 +149,7 @@ stop(Group) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% @hidden
--spec init({once | pos_integer(), pos_integer()}) -> {ok, state(), hibernate} | ignore | {stop, term()}.
+-spec init({once | pos_integer(), pos_integer()}) -> {ok, state(), hibernate}.
 init({CollectEvery, TimeThreshold}) ->
   CTimer =
     case CollectEvery of
@@ -174,7 +165,7 @@ init({CollectEvery, TimeThreshold}) ->
               metrics         = []}, hibernate}.
 
 %% @hidden
--spec handle_call({delete_metric, term(), term()} | {add_metric, term(), binary(), atom(), term(), [gmetric:option()], float()} | which_metrics | {call, term(), term()}, reference(), state()) -> call_result().
+-spec handle_call({delete_metric, term(), term()} | {add_metric, term(), binary(), atom(), term(), [gmetric:option()], float()} | which_metrics | {call, term(), term()}, reference(), state()) -> {reply, Reply::term(), State::term()}.
 handle_call({add_metric, MetricId, Module, InitArgs, Options, Threshold}, _From, State) ->
   #state{metrics = Metrics, collect_timer = CTimer} = State,
   case lists:keymember(MetricId, #metric.id, Metrics) of
@@ -237,7 +228,7 @@ handle_call({call, MetricId, Request}, _From, State = #state{metrics = Metrics})
   end.
 
 %% @hidden
--spec handle_cast(stop | {cast, term(), term()}, state()) -> handler_result().
+-spec handle_cast(stop | {cast, term(), term()}, state()) -> {noreply, state()} | {stop, normal, state()}.
 handle_cast(stop, State) ->
   {stop, normal, State};
 handle_cast({cast, MetricId, Request}, State = #state{metrics = Metrics}) ->
@@ -262,7 +253,7 @@ handle_cast({cast, MetricId, Request}, State = #state{metrics = Metrics}) ->
   end.
 
 %% @hidden
--spec handle_info(collect | announce | term(), state()) -> handler_result().
+-spec handle_info(collect | announce | term(), state()) -> {noreply, state()}.
 handle_info(collect, State = #state{metrics = Metrics}) ->
   {Announce, NewMetrics} =
     lists:foldl(fun(Metric, {AccAnnounce, AccMetrics}) ->
