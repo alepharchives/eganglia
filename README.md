@@ -15,8 +15,7 @@ Start the application using `eganglia:start/0` to start the metric groups define
 * `groups :: [metric_group()]`: Default metric groups to load on application start.
                                 Each metric_group is represented by a tuple that may have one of the following formats:
   * `{Name, CollectEvery, TimeThreshold, Metrics}`
-  * `{CollectEvery, TimeThreshold, Metrics}`
-  * `{CollectEvery, Metrics}`
+  * `{Name, CollectEvery, Metrics}`
   These parameters behave as follows:
   * `Name :: {local|global, atom()}`: The metric group process will be registered with this name
   * `CollectEvery :: once | pos_integer()`: Metrics will be collected either once or every *CollectEvery* seconds

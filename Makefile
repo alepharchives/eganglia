@@ -20,3 +20,6 @@ xref: all
 
 shell: all
 	${ERL}
+
+run: all
+	${ERL} -s eganglia
