@@ -22,7 +22,7 @@
 
 -module(metric_group).
 -author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
--vsn("0.1").
+-vsn("1.0").
 
 -behaviour(gen_server).
 

@@ -22,7 +22,7 @@
 
 -module(eganglia).
 -author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
--vsn("0.1").
+-vsn("0.5").
 
 -behaviour(application).
 

@@ -42,7 +42,7 @@
 
 -module(gen_metric).
 -author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
--vsn("0.1").
+-vsn("1.0").
 
 -type init_result()   :: {ok, Title::binary(), State::term()}.
 -type metric_result() :: {ok, Value::term(), State::term()}.
