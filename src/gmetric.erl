@@ -81,7 +81,6 @@ run(Options) ->
   Command = erlang:binary_to_list(
               erlang:iolist_to_binary(
                 "gmetric" ++ lists:map(fun parse_option/1, Options))),
-  io:format([Command, $\n]),
   os:cmd(Command).
 
 parse_option({Name, Value}) ->
