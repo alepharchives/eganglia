@@ -1,4 +1,4 @@
-ERL := erl -pa ebin +Bc +K true -smp enable -boot start_sasl
+ERL := erl -pa ebin +Bc +K true -smp enable -boot start_sasl -sname ganglia -setcookie ganglia
 
 all:
 	rebar get-deps && rebar compile
