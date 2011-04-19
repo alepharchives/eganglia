@@ -19,8 +19,11 @@
   {registered, []},
   {applications, [kernel, stdlib]},
   {mod, {eganglia, []}},
-	{env, [{groups, [{{local, basics}, 10, [{active_processes_metric, []}]},
-                   {{local, constants}, once, [{constant_metric, <<"Testing...">>}]}
+  {env, [{groups, [{{local, basics}, 1, [{process_count, system_info_metric, process_count},
+                                         {run_queue, statistics_metric, run_queue},
+                                         {reductions, statistics_metric, reductions},
+                                         {uptime_metric, []}]},
+                   {{local, constants}, once, [{otp_version_metric, []}]}
                   ]}
         ]}
  ]}.
