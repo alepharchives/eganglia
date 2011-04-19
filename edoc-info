@@ -1,4 +1,4 @@
 {application,eganglia}.
 {packages,[metrics]}.
-{modules,[active_processes_metric,constant_metric,eganglia,gen_metric,gmetric,
-          metric_group]}.
+{modules,[constant_metric,eganglia,gen_metric,gmetric,memory_metric,
+          metric_group,statistics_metric,system_info_metric,uptime_metric]}.
