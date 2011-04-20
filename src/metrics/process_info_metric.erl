@@ -52,7 +52,11 @@ init({OpName, Info}) ->
   {ok, erlang:iolist_to_binary(io_lib:format("~p ~p ~p", [node(), OpName, Info])),
    #state{info  = Info,
           op    = case OpName of
-                    avg -> fun(L) -> lists:sum(L) / erlang:length(L) end;
+                    avg -> fun(L) -> case erlang:length(L) of
+                                       0 -> 0;
+                                       LL -> lists:sum(L) / LL
+                                     end
+                           end;
                     sum -> fun lists:sum/1;
                     max -> fun lists:max/1
                   end}}.
@@ -60,8 +64,8 @@ init({OpName, Info}) ->
 %% @private
 -spec handle_metric(state()) -> {ok, pos_integer(), state()}.
 handle_metric(State = #state{info = Info, op = Op}) ->
-  Values = [element(2, erlang:process_info(Pid, Info)) || Pid <- erlang:processes()],
-  {ok, Op(Values), State}.
+  Values = [erlang:process_info(Pid, Info) || Pid <- erlang:processes()],
+  {ok, Op([V || {I, V} <- Values, I =:= Info]), State}.
 
 %% @private
 -spec handle_call(Any, state()) -> {stop, {unexpected_call, Any}, {unexpected_call, Any}, state()}.
