@@ -91,4 +91,4 @@ parse_option(Name) ->
 parse_value(Value) when is_atom(Value) -> atom_to_list(Value);
 parse_value(Value) when is_integer(Value) -> integer_to_list(Value);
 parse_value(Value) when is_float(Value) -> float_to_list(Value);
-parse_value(Value) -> [$\", re:replace(Value, "['\"]", ""), $\"].
+parse_value(Value) -> [$\", re:replace(Value, "['\"]", "", [global]), $\"].
