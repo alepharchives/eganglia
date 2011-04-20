@@ -26,11 +26,6 @@
 -record(state, {info :: term()}).
 -opaque state() :: #state{}.
 
--define(SECONDS_PER_MIN, 60).
--define(SECONDS_PER_HOUR, (?SECONDS_PER_MIN*60)).
--define(SECONDS_PER_DAY, (?SECONDS_PER_HOUR*24)).
--define(R(V,N), string:right(integer_to_list(V),N,$0)).
-
 -export([add/2, delete/2]).
 -export([init/1, handle_metric/1, handle_call/2, handle_cast/2, terminate/2]).
 
@@ -40,12 +35,12 @@
 %% @doc Adds the metric to the group. The value will come from erlang:memory(Info)
 -spec add(metric_group:group(), term()) -> ok | {error, already_present | term()}.
 add(Group, Info) ->
-  metric_group:add_metric(Group, Info, ?MODULE, Info).
+  metric_group:add_metric(Group, {?MODULE, Info}, ?MODULE, Info).
 
 %% @doc Removes the metric from the group
 -spec delete(metric_group:group(), term()) -> ok | {error, not_found}.
 delete(Group, Info) ->
-  metric_group:delete_metric(Group, Info, normal).
+  metric_group:delete_metric(Group, {?MODULE, Info}, normal).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% API FUNCTIONS

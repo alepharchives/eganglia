@@ -1,7 +1,7 @@
 %%%-------------------------------------------------------------------
 %%% @author Fernando Benavides <fernando.benavides@inakanetworks.com>
 %%% @copyright (C) 2011 Inaka Labs SRL
-%%% @doc erlang:statistics/1 metrics
+%%% @doc erlang:process_info/1 metrics
 %%% @end
 %%%-------------------------------------------------------------------
 
@@ -18,44 +18,50 @@
 %% KIND, either express or implied.  See the License for the
 %% specific language governing permissions and limitations
 %% under the License.
--module(statistics_metric).
+-module(process_info_metric).
 -author('Fernando Benavides <fernando.benavides@inakanetworks.com>').
 
 -behavior(gen_metric).
 
--record(state, {info :: term()}).
+-record(state, {info :: term(), op :: fun(([integer() | float()]) -> integer() | float())}).
 -opaque state() :: #state{}.
 
--export([add/2, delete/2]).
+-export([add/3, delete/3]).
 -export([init/1, handle_metric/1, handle_call/2, handle_cast/2, terminate/2]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% API FUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% @doc Adds the metric to the group. The value will come from erlang:statistics(Info)
--spec add(metric_group:group(), term()) -> ok | {error, already_present | term()}.
-add(Group, Info) ->
-  metric_group:add_metric(Group, {?MODULE, Info}, ?MODULE, Info).
+%% @doc Adds the metric to the group.
+%%      The value will come roughly from <code>OpName([element(2, erlang:process_info(Pid, Info)) || Pid <- erlang:processes()])</code>
+-spec add(metric_group:group(), avg | sum | max, atom()) -> ok | {error, already_present | term()}.
+add(Group, OpName, Info) ->
+  metric_group:add_metric(Group, {?MODULE, OpName, Info}, ?MODULE, {OpName, Info}).
 
 %% @doc Removes the metric from the group
--spec delete(metric_group:group(), term()) -> ok | {error, not_found}.
-delete(Group, Info) ->
-  metric_group:delete_metric(Group, {?MODULE, Info}, normal).
+-spec delete(metric_group:group(), avg | sum | max, atom()) -> ok | {error, not_found}.
+delete(Group, OpName, Info) ->
+  metric_group:delete_metric(Group, {?MODULE, OpName, Info}, normal).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% API FUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% @private
--spec init(term()) -> {ok, binary(), state()}.
-init(Info) ->
-  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p", [node(), Info])), #state{info = Info}}.
+-spec init({atom(), avg | sum | max}) -> {ok, binary(), state()}.
+init({OpName, Info}) ->
+  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p ~p", [node(), OpName, Info])),
+   #state{info  = Info,
+          op    = case OpName of
+                    avg -> fun(L) -> lists:sum(L) / erlang:length(L) end;
+                    sum -> fun lists:sum/1;
+                    max -> fun lists:max/1
+                  end}}.
 
 %% @private
 -spec handle_metric(state()) -> {ok, pos_integer(), state()}.
-handle_metric(State = #state{info = Info}) -> {ok, case erlang:statistics(Info) of
-                                                     {Total, _LastCall} -> Total;
-                                                     Other -> Other
-                                                   end, State}.
+handle_metric(State = #state{info = Info, op = Op}) ->
+  Values = [element(2, erlang:process_info(Pid, Info)) || Pid <- erlang:processes()],
+  {ok, Op(Values), State}.
 
 %% @private
 -spec handle_call(Any, state()) -> {stop, {unexpected_call, Any}, {unexpected_call, Any}, state()}.

@@ -19,20 +19,29 @@
   {registered, []},
   {applications, [kernel, stdlib]},
   {mod, {eganglia, []}},
-  {env, [{groups, [{{local, basics}, 5, [{process_count, system_info_metric, process_count, [{type, uint32}]},
-                                         {run_queue, statistics_metric, run_queue, [{type, uint32}]},
-                                         {reductions, statistics_metric, reductions, [{type, uint32}]},
-                                         {uptime_metric, []}]},
-                   {{local, memory}, 5, [{memory_system, memory_metric, system, [{type, uint32}]},
-                                         {memory_atom, memory_metric, atom, [{type, uint32}]},
-                                         {memory_atom_used, memory_metric, atom_used, [{type, uint32}]},
-                                         {memory_binary, memory_metric, binary, [{type, uint32}]},
-                                         {memory_code, memory_metric, code, [{type, uint32}]},
-                                         {memory_ets, memory_metric, ets, [{type, uint32}]},
-                                         {memory_processes, memory_metric, processes, [{type, uint32}]},
-                                         {memory_processes_used, memory_metric, processes_used, [{type, uint32}]}                                         
+  {env, [{groups, [{{local, basics}, 30, [{process_count, system_info_metric, process_count, [{type, uint32}]},
+                                          {run_queue, statistics_metric, run_queue, [{type, uint32}]},
+                                          {reductions, statistics_metric, reductions, [{type, uint32}]},
+                                          {uptime_metric, []}]},
+                   {{local, memory}, 30, [{memory_system, memory_metric, system, [{type, uint32}]},
+                                          {memory_atom, memory_metric, atom, [{type, uint32}]},
+                                          {memory_atom_used, memory_metric, atom_used, [{type, uint32}]},
+                                          {memory_binary, memory_metric, binary, [{type, uint32}]},
+                                          {memory_code, memory_metric, code, [{type, uint32}]},
+                                          {memory_ets, memory_metric, ets, [{type, uint32}]},
+                                          {memory_processes, memory_metric, processes, [{type, uint32}]},
+                                          {memory_processes_used, memory_metric, processes_used, [{type, uint32}]}                                         
                                          ]},
-                   {{local, constants}, once, 10, [{otp_release, system_info_metric, otp_release}]}
+                   {{local, processes}, 30, [{process_avg_queue_len, process_metric, {avg, message_queue_len}, [{type, double}]},
+                                             {process_max_queue_len, process_metric, {max, message_queue_len}, [{type, double}]},
+                                             {process_avg_heap_size, process_metric, {avg, heap_size}, [{type, double}]},
+                                             {process_max_heap_size, process_metric, {max, heap_size}, [{type, double}]},
+                                             {process_avg_stack_size, process_metric, {avg, stack_size}, [{type, double}]},
+                                             {process_max_stack_size, process_metric, {max, stack_size}, [{type, double}]},
+                                             {process_avg_memory_size, process_metric, {avg, memory_size}, [{type, double}]},
+                                             {process_max_memory_size, process_metric, {max, memory_size}, [{type, double}]}
+                                            ]},
+                   {{local, constants}, once, 3600, [{otp_release, system_info_metric, otp_release}]}
                   ]}
         ]}
  ]}.
