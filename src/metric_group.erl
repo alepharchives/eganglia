@@ -327,6 +327,6 @@ collect_metric(Module, ModState, LastValue) ->
     _:{ok, Value, NewModState} ->
       {Value, NewModState};
     _:Error ->
-      error_logger:warning_msg("Error on ~p:handle_metric/1: ~p.~nPreserving last value: ~p~nStack: ~p~n", [Module, Error, LastValue, erlang:get_stacktrace()]),
+      error_logger:warning_msg("Error on ~p:handle_metric/1 (State: ~p): ~p.~nPreserving last value: ~p~nStack: ~p~n", [Module, ModState, Error, LastValue, erlang:get_stacktrace()]),
       {LastValue, ModState}
   end.
