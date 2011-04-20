@@ -32,14 +32,14 @@
                                           {memory_processes, memory_metric, processes, [{type, uint32}]},
                                           {memory_processes_used, memory_metric, processes_used, [{type, uint32}]}                                         
                                          ]},
-                   {{local, processes}, 30, [{process_avg_queue_len, process_metric, {avg, message_queue_len}, [{type, double}]},
-                                             {process_max_queue_len, process_metric, {max, message_queue_len}, [{type, double}]},
-                                             {process_avg_heap_size, process_metric, {avg, heap_size}, [{type, double}]},
-                                             {process_max_heap_size, process_metric, {max, heap_size}, [{type, double}]},
-                                             {process_avg_stack_size, process_metric, {avg, stack_size}, [{type, double}]},
-                                             {process_max_stack_size, process_metric, {max, stack_size}, [{type, double}]},
-                                             {process_avg_memory_size, process_metric, {avg, memory_size}, [{type, double}]},
-                                             {process_max_memory_size, process_metric, {max, memory_size}, [{type, double}]}
+                   {{local, processes}, 30, [{process_avg_queue_len, process_info_metric, {avg, message_queue_len}, [{type, double}]},
+                                             {process_max_queue_len, process_info_metric, {max, message_queue_len}, [{type, double}]},
+                                             {process_avg_heap_size, process_info_metric, {avg, heap_size}, [{type, double}]},
+                                             {process_max_heap_size, process_info_metric, {max, heap_size}, [{type, double}]},
+                                             {process_avg_stack_size, process_info_metric, {avg, stack_size}, [{type, double}]},
+                                             {process_max_stack_size, process_info_metric, {max, stack_size}, [{type, double}]},
+                                             {process_avg_memory_size, process_info_metric, {avg, memory}, [{type, double}]},
+                                             {process_max_memory_size, process_info_metric, {max, memory}, [{type, double}]}
                                             ]},
                    {{local, constants}, once, 3600, [{otp_release, system_info_metric, otp_release}]}
                   ]}
