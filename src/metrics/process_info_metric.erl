@@ -33,7 +33,7 @@
 %% API FUNCTIONS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% @doc Adds the metric to the group.
-%%      The value will come roughly from <code>OpName([element(2, erlang:process_info(Pid, Info)) || Pid <- erlang:processes()])</code>
+%%      The value will come roughly from <code>OpName([element(2, erlang:process_info(Pid, Info)) || Pid &lt;- erlang:processes()])</code>
 -spec add(metric_group:group(), avg | sum | max, atom()) -> ok | {error, already_present | term()}.
 add(Group, OpName, Info) ->
   metric_group:add_metric(Group, {?MODULE, OpName, Info}, ?MODULE, {OpName, Info}).
