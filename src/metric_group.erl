@@ -58,7 +58,7 @@
                  last_value             :: term()}).
 -type metric() :: #metric{}.
 -record(state, {collect_timer   :: collect_once | timer:tref(),
-                announce_timer  :: timer:tref(),
+                announce_timer  :: reference(),
                 time_threshold  :: pos_integer(),
                 metrics = []    :: [metric()]
                }).
@@ -158,7 +158,7 @@ init({CollectEvery, TimeThreshold}) ->
         {ok, TRef} = timer:send_interval(ESeconds * 1000, collect),
         TRef
     end,
-  {ok, ATimer} = timer:send_after(TimeThreshold * 1000, announce), 
+  ATimer = erlang:send_after(TimeThreshold * 1000, self(), announce), 
   {ok, #state{collect_timer   = CTimer,
               announce_timer  = ATimer,
               time_threshold  = TimeThreshold,
@@ -271,9 +271,9 @@ handle_info(collect, State = #state{metrics = Metrics}) ->
       handle_info(announce, State#state{metrics = NewMetrics})
   end;
 handle_info(announce, State = #state{metrics = Metrics, announce_timer = ATimer, time_threshold = TimeThreshold}) ->
-  {ok, cancel} = timer:cancel(ATimer),
+  _ = erlang:cancel_timer(ATimer),
   lists:foreach(fun announce_metric/1, Metrics),
-  {ok, NewATimer} = timer:send_after(TimeThreshold * 1000, announce),
+  NewATimer = erlang:send_after(TimeThreshold * 1000, self(), announce),
   {noreply, State#state{announce_timer = NewATimer}};
 handle_info(Info, State) ->
   error_logger:info_msg("Ignored info: ~p~n", [Info]),
