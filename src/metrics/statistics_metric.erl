@@ -50,6 +50,9 @@ delete(Group, Kind, Info) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% @private
 -spec init({kind(), term()}) -> {ok, binary(), state()}.
+init({as_is, Info}) ->
+  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p", [node(), Info])),
+   #state{info = Info, kind = Kind}};
 init({Kind, Info}) ->
   {ok, erlang:iolist_to_binary(io_lib:format("~p ~p ~p", [node(), Kind, Info])),
    #state{info = Info, kind = Kind}}.
