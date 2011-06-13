@@ -41,7 +41,7 @@
 %% API
 -export([add_metric/3, add_metric/4, add_metric/5, add_metric/6, delete_metric/3,
          call/3, call/4, cast/3,
-         start_link/3, start_link/4, start/3, start/4, stop/1,
+         start_link/4, start_link/5, start/4, start/5, stop/1,
          which_metrics/1]).
 %% GEN SERVER
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -60,7 +60,9 @@
 -record(state, {collect_timer   :: collect_once | timer:tref(),
                 announce_timer  :: reference(),
                 time_threshold  :: pos_integer(),
-                metrics = []    :: [metric()]
+                metrics = []    :: [metric()],
+                default_options :: [gmetric:option()],
+                bin_node        :: binary()
                }).
 -opaque state() :: #state{}.
 -export_type([metric/0]).
@@ -70,24 +72,24 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% @doc  Starts a metric group.
--spec start(once | pos_integer(), pos_integer(), [start_option()]) -> start_result().
-start(CollectEvery, TimeThreshold, Options) ->
-  gen_server:start(?MODULE, {CollectEvery, TimeThreshold}, Options).
+-spec start(once | pos_integer(), pos_integer(), [gmetric:option()], [start_option()]) -> start_result().
+start(CollectEvery, TimeThreshold, DefaultOptions, Options) ->
+  gen_server:start(?MODULE, {CollectEvery, TimeThreshold, DefaultOptions}, Options).
 
 %%% @doc  Starts a named metric group.
--spec start({local|global, atom()}, once | pos_integer(), pos_integer(), [start_option()]) -> start_result().
-start(Name, CollectEvery, TimeThreshold, Options) ->
-  gen_server:start(Name, ?MODULE, {CollectEvery, TimeThreshold}, Options).
+-spec start({local|global, atom()}, once | pos_integer(), pos_integer(), [gmetric:option()], [start_option()]) -> start_result().
+start(Name, CollectEvery, TimeThreshold, DefaultOptions, Options) ->
+  gen_server:start(Name, ?MODULE, {CollectEvery, TimeThreshold, DefaultOptions}, Options).
 
 %%% @doc  Starts and links a metric group.
--spec start_link(once | pos_integer(), pos_integer(), [start_option()]) -> start_result().
-start_link(CollectEvery, TimeThreshold, Options) ->
-  gen_server:start_link(?MODULE, {CollectEvery, TimeThreshold}, Options).
+-spec start_link(once | pos_integer(), pos_integer(), [gmetric:option()], [start_option()]) -> start_result().
+start_link(CollectEvery, TimeThreshold, DefaultOptions, Options) ->
+  gen_server:start_link(?MODULE, {CollectEvery, TimeThreshold, DefaultOptions}, Options).
 
 %%% @doc  Starts and links a named generic server.
--spec start_link({local|global, atom()}, once | pos_integer(), pos_integer(), [start_option()]) -> start_result().
-start_link(Name, CollectEvery, TimeThreshold, Options) ->
-  gen_server:start_link(Name, ?MODULE, {CollectEvery, TimeThreshold}, Options).
+-spec start_link({local|global, atom()}, once | pos_integer(), pos_integer(), [gmetric:option()], [start_option()]) -> start_result().
+start_link(Name, CollectEvery, TimeThreshold, DefaultOptions, Options) ->
+  gen_server:start_link(Name, ?MODULE, {CollectEvery, TimeThreshold, DefaultOptions}, Options).
 
 %% @doc  Adds a metric to the group
 %% @equiv add_metric(Group, Module, Module, InitArgs)
@@ -149,8 +151,8 @@ stop(Group) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% @hidden
--spec init({once | pos_integer(), pos_integer()}) -> {ok, state(), hibernate}.
-init({CollectEvery, TimeThreshold}) ->
+-spec init({once | pos_integer(), pos_integer(), [gmetric:option()]}) -> {ok, state(), hibernate}.
+init({CollectEvery, TimeThreshold, DefaultOptions}) ->
   CTimer =
     case CollectEvery of
       once -> collect_once;
@@ -158,22 +160,25 @@ init({CollectEvery, TimeThreshold}) ->
         {ok, TRef} = timer:send_interval(ESeconds * 1000, collect),
         TRef
     end,
-  ATimer = erlang:send_after(TimeThreshold * 1000, self(), announce), 
+  ATimer = erlang:send_after(TimeThreshold * 1000, self(), announce),
   {ok, #state{collect_timer   = CTimer,
               announce_timer  = ATimer,
               time_threshold  = TimeThreshold,
+              default_options = DefaultOptions,
+              bin_node        = binary:split(atom_to_binary(node(), utf8), <<"@">>, [trim]),
               metrics         = []}, hibernate}.
 
 %% @hidden
 -spec handle_call({delete_metric, term(), term()} | {add_metric, term(), binary(), atom(), term(), [gmetric:option()], float()} | which_metrics | {call, term(), term()}, reference(), state()) -> {reply, Reply::term(), State::term()}.
 handle_call({add_metric, MetricId, Module, InitArgs, Options, Threshold}, _From, State) ->
-  #state{metrics = Metrics, collect_timer = CTimer} = State,
+  #state{metrics = Metrics, collect_timer = CTimer,
+         default_options = DefaultOptions, bin_node = BinNode} = State,
   case lists:keymember(MetricId, #metric.id, Metrics) of
     true ->
       {reply, {error, already_present}, State};
     false ->
       try Module:init(InitArgs) of
-        {ok, Title, ModState} ->
+        {ok, SubTitle, ModState} ->
           {Value, ModState1} =
             case CTimer of
               collect_once ->
@@ -183,11 +188,11 @@ handle_call({add_metric, MetricId, Module, InitArgs, Options, Threshold}, _From,
             end,
           Metric =
             #metric{id              = MetricId,
-                    title           = Title,
+                    title           = <<BinNode/binary, $\s, SubTitle/binary>>,
                     module          = Module,
                     mod_state       = ModState1,
                     value_threshold = Threshold,
-                    options         = Options,
+                    options         = merge(Options, DefaultOptions),
                     last_value      = Value},
           {reply, ok, State#state{metrics = [Metric|Metrics]}};
         Other ->
@@ -330,3 +335,14 @@ collect_metric(Module, ModState, LastValue) ->
       error_logger:warning_msg("Error on ~p:handle_metric/1 (State: ~p): ~p.~nPreserving last value: ~p~nStack: ~p~n", [Module, ModState, Error, LastValue, erlang:get_stacktrace()]),
       {LastValue, ModState}
   end.
+
+merge(Options, DefaultOptions) ->
+  lists:foldl(fun({Key, Value}, AccOptions) ->
+                      lists:keystore(Key, 1, AccOptions,
+                                     proplists:get_value(Key, AccOptions, Value));
+                 (Key, AccOptions) ->
+                      case lists:member(Key, AccOptions) of
+                        true -> AccOptions;
+                        false -> [Key | AccOptions]
+                      end
+              end, Options, DefaultOptions).

@@ -52,7 +52,7 @@ delete(Group) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% @private
 -spec init([]) -> {ok, binary(), state()}.
-init([]) -> {ok, <<(atom_to_binary(node(), utf8))/binary, " Uptime">>, #state{}}.
+init([]) -> {ok, <<"uptime">>, #state{}}.
 
 %% @private
 -spec handle_metric(state()) -> {ok, string(), state()}.

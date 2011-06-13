@@ -26,7 +26,8 @@
                 | {term(), atom(), term()}
                 | {term(), atom(), term(), [gmetric:option()]}
                 | {term(), atom(), term(), [gmetric:option()], float}.
--type metric_group() :: {{local|global, atom()}, once | pos_integer(), pos_integer(), [metric()]}
+-type metric_group() :: {{local|global, atom()}, once | pos_integer(), pos_integer(), [gmetric:option()], [metric()]}
+                      | {{local|global, atom()}, once | pos_integer(), pos_integer(), [metric()]}
                       | {{local|global, atom()}, once | pos_integer(), [metric()]}.
 
 %% ===================================================================
@@ -55,11 +56,14 @@ start_link() ->
 -spec init([metric_group()]) -> {ok, {{one_for_one, 5, 10}, [supervisor:child_spec()]}}.
 init(Groups) ->
   Children =
-    lists:map(fun({{_, Name} = Reg, CollectEvery, TimeThreshold, _Metrics}) ->
-                      {Name, {metric_group, start_link, [Reg, CollectEvery, TimeThreshold, []]},
+    lists:map(fun({{_, Name} = Reg, CollectEvery, TimeThreshold, DefaultOptions, _Metrics}) ->
+                      {Name, {metric_group, start_link, [Reg, CollectEvery, TimeThreshold, DefaultOptions, []]},
+                       permanent, 1000, worker, [metric_group]};
+                 ({{_, Name} = Reg, CollectEvery, TimeThreshold, _Metrics}) ->
+                      {Name, {metric_group, start_link, [Reg, CollectEvery, TimeThreshold, [], []]},
                        permanent, 1000, worker, [metric_group]};
                  ({{_, Name} = Reg, CollectEvery, _Metrics}) ->
-                      {Name, {metric_group, start_link, [Reg, CollectEvery, ?DEFAULT_THRESHOLD, []]},
+                      {Name, {metric_group, start_link, [Reg, CollectEvery, ?DEFAULT_THRESHOLD, [], []]},
                        permanent, 1000, worker, [metric_group]}
               end, Groups),
   error_logger:info_msg("Inititalizing eganglia supervisor with ~p metric groups...~n", [length(Children)]),

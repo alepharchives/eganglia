@@ -49,7 +49,7 @@ delete(Group, OpName, Info) ->
 %% @private
 -spec init({atom(), avg | sum | max}) -> {ok, binary(), state()}.
 init({OpName, Info}) ->
-  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p ~p", [node(), OpName, Info])),
+  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p", [OpName, Info])),
    #state{info  = Info,
           op    = case OpName of
                     avg -> fun(L) -> case erlang:length(L) of

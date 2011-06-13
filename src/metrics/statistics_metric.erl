@@ -51,10 +51,10 @@ delete(Group, Kind, Info) ->
 %% @private
 -spec init({kind(), term()}) -> {ok, binary(), state()}.
 init({as_is, Info}) ->
-  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p", [node(), Info])),
+  {ok, erlang:iolist_to_binary(io_lib:format("~p", [Info])),
    #state{info = Info, kind = as_is}};
 init({Kind, Info}) ->
-  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p ~p", [node(), Kind, Info])),
+  {ok, erlang:iolist_to_binary(io_lib:format("~p ~p", [Kind, Info])),
    #state{info = Info, kind = Kind}}.
 
 %% @private
