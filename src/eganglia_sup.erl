@@ -59,8 +59,11 @@ init(Groups) ->
     lists:map(fun({{_, Name} = Reg, CollectEvery, TimeThreshold, DefaultOptions, _Metrics}) ->
                       {Name, {metric_group, start_link, [Reg, CollectEvery, TimeThreshold, DefaultOptions, []]},
                        permanent, 1000, worker, [metric_group]};
-                 ({{_, Name} = Reg, CollectEvery, TimeThreshold, _Metrics}) ->
+                 ({{_, Name} = Reg, CollectEvery, TimeThreshold, _Metrics}) when is_integer(TimeThreshold) ->
                       {Name, {metric_group, start_link, [Reg, CollectEvery, TimeThreshold, [], []]},
+                       permanent, 1000, worker, [metric_group]};
+                 ({{_, Name} = Reg, CollectEvery, DefaultOptions, _Metrics}) ->
+                      {Name, {metric_group, start_link, [Reg, CollectEvery, ?DEFAULT_THRESHOLD, DefaultOptions, []]},
                        permanent, 1000, worker, [metric_group]};
                  ({{_, Name} = Reg, CollectEvery, _Metrics}) ->
                       {Name, {metric_group, start_link, [Reg, CollectEvery, ?DEFAULT_THRESHOLD, [], []]},
