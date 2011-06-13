@@ -22,4 +22,8 @@ shell: all
 	${ERL}
 
 run: all
-	${ERL} -s eganglia
+	if [ -f `hostname`.config ]; then\
+		${ERL} -config `hostname` -s eganglia;\
+	else\
+		${ERL} -s eganglia;\
+	fi

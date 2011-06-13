@@ -165,7 +165,7 @@ init({CollectEvery, TimeThreshold, DefaultOptions}) ->
               announce_timer  = ATimer,
               time_threshold  = TimeThreshold,
               default_options = DefaultOptions,
-              bin_node        = binary:split(atom_to_binary(node(), utf8), <<"@">>, [trim]),
+              bin_node        = hd(binary:split(atom_to_binary(node(), utf8), <<"@">>, [trim])),
               metrics         = []}, hibernate}.
 
 %% @hidden
@@ -339,7 +339,7 @@ collect_metric(Module, ModState, LastValue) ->
 merge(Options, DefaultOptions) ->
   lists:foldl(fun({Key, Value}, AccOptions) ->
                       lists:keystore(Key, 1, AccOptions,
-                                     proplists:get_value(Key, AccOptions, Value));
+                                     {Key, proplists:get_value(Key, AccOptions, Value)});
                  (Key, AccOptions) ->
                       case lists:member(Key, AccOptions) of
                         true -> AccOptions;
